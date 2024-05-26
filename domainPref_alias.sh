@@ -2,7 +2,7 @@
 
 write_domain ()
 {
-    cd /home/core/mentees/$1
+    cd /home/core/mentees/$2
     concatenated_pref=""
     for i in first second third
     do 
