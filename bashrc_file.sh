@@ -42,6 +42,9 @@ setupfunc ()
     sudo chmod 700 /home/core/$3
     sudo setfacl -m g:sudo:rwx /home/core/$3
 
+    # Change core's shell from sh to bash
+    sudo usermod -s /bin/bash core
+
     # Mentee users creation and permission
     mentee_list=$(grep -v ^Name $2 | cut -d ' ' -f 1)
     for mentee in $mentee_list
@@ -51,6 +54,7 @@ setupfunc ()
         sudo setfacl -m g:sudo:rwx /home/core/mentees/$mentee
 
         # Allow access for core 
+        sudo setfacl -m u:core:rwx /home/core/mentees/$mentee
         sudo setfacl -d -m u:core:rwx /home/core/mentees/$mentee
         
         # Allow defaults permissions for $mentee
@@ -92,6 +96,7 @@ setupfunc ()
         sudo setfacl -m g:sudo:rwx /home/core/mentors/Webdev/$mentor
         
         # Allow access for core
+        sudo setfacl -m u:core:rwx /home/core/mentors/Webdev/$mentor
         sudo setfacl -d -m u:core:rwx /home/core/mentors/Webdev/$mentor
         
         # Creation of required files and directories within $mentor's home directory
@@ -100,8 +105,7 @@ setupfunc ()
         mkdir submitted_tasks
         
         # Allow access for core
-        sudo setfacl -d -m u:core:rwx /home/core/mentors/Webdev/$mentor/submitted_tasks
-    
+        sudo setfacl -m u:core:rwx /home/core/mentors/Webdev/$mentor/submitted_tasks
         sudo setfacl -d -m u:$mentor:rwx /home/core/mentors/Webdev/$mentor/submitted_tasks
         
         # Creation of required directories within submitted_tasks
@@ -139,6 +143,7 @@ setupfunc ()
         sudo setfacl -m g:sudo:rwx /home/core/mentors/Appdev/$mentor
 
         # Allow access for core
+        sudo setfacl -m u:core:rwx /home/core/mentors/Appdev/$mentor
         sudo setfacl -d -m u:core:rwx /home/core/mentors/Appdev/$mentor
 
         # Creation of required files and directories within $mentor's home directory
@@ -186,6 +191,7 @@ setupfunc ()
         sudo setfacl -m g:sudo:rwx /home/core/mentors/Sysad/$mentor
 
         # Allow access for core
+        sudo setfacl -m u:core:rwx /home/core/mentors/Sysad/$mentor
         sudo setfacl -d -m u:core:rwx /home/core/mentors/Sysad/$mentor
         
         # Creation of required files and directories within $mentor's home directory
