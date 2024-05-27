@@ -68,7 +68,7 @@ ask_pref ()
 menu ()
 {
     read -p "Enter your Roll Number: " roll_no
-    if (( $roll_no > 100000000 && $roll_no < 120000000 ))
+    if (( $roll_no > 10000000 && $roll_no < 12000000 ))
     then
         echo "Provide your preference in order"
         echo "Enter 1 for Webdev "
