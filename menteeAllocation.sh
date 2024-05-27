@@ -5,7 +5,8 @@ web_Mentor_Allocation_func ()
     declare -a Mentor_array_web
     declare -a Mentee_capacity_array_web
     
-    webdevlist=$(awk 'BEGIN{FS=" "; OFS=","} $0 !~/^Name/{if ($2 ~ /web/) print $3,$1 ;}' $1 | sort -k1,1nr)
+    webdevlist=$(curl -s https://inductions.delta.nitt.edu/sysad-task1-mentorDetails.txt | cat | awk 'BEGIN{FS=" "; OFS=","} $0 !~/^Name/{if ($2 ~ /web/) print $3,$1 ;}' \
+ | sort -k1,1nr)
     declare -i j
     j=0
     for i in $webdevlist
@@ -18,8 +19,8 @@ web_Mentor_Allocation_func ()
 
 
     declare -a rollnolist_web
-    menteelist_web=$(awk 'BEGIN{FS=" "} $0 !~/Rollno Name Domain/{if ($3 ~/.*web.*/) print $2 ;}' $2)
-    rollnolist_web=($(awk 'BEGIN{FS=" "} $0 !~/Rollno Name Domain/{if ($3 ~/.*web.*/) print $1 ;}' $2))
+    menteelist_web=$(awk 'BEGIN{FS=" "} $0 !~/Rollno Name Domain/{if ($3 ~/.*web.*/) print $2 ;}' $1)
+    rollnolist_web=($(awk 'BEGIN{FS=" "} $0 !~/Rollno Name Domain/{if ($3 ~/.*web.*/) print $1 ;}' $1))
     declare -i j
     j=0
     n=${#Mentor_array_web[@]}
@@ -42,7 +43,8 @@ app_Mentor_Allocation_func ()
     declare -a Mentor_array_app
     declare -a Mentee_capacity_array_app
     
-    appdevlist=$(awk 'BEGIN{FS=" "; OFS=","} $0 !~/^Name/{if ($2 ~ /app/) print $3,$1 ;}' $1 | sort -k1,1nr)
+    appdevlist=$(curl -s https://inductions.delta.nitt.edu/sysad-task1-mentorDetails.txt | cat | awk 'BEGIN{FS=" "; OFS=","} $0 !~/^Name/{if ($2 ~ /app/) print $3,$1 ;}' \
+ | sort -k1,1nr)
     declare -i j
     j=0
     for i in $appdevlist
@@ -55,8 +57,8 @@ app_Mentor_Allocation_func ()
 
 
     declare -a rollnolist_app
-    menteelist_app=$(awk 'BEGIN{FS=" "} $0 !~/Rollno Name Domain/{if ($3 ~/.*app.*/) print $2 ;}' $2)
-    rollnolist_app=($(awk 'BEGIN{FS=" "} $0 !~/Rollno Name Domain/{if ($3 ~/.*app.*/) print $1 ;}' $2))
+    menteelist_app=$(awk 'BEGIN{FS=" "} $0 !~/Rollno Name Domain/{if ($3 ~/.*app.*/) print $2 ;}' $1)
+    rollnolist_app=($(awk 'BEGIN{FS=" "} $0 !~/Rollno Name Domain/{if ($3 ~/.*app.*/) print $1 ;}' $1))
     declare -i j
     j=0
     n=${#Mentor_array_app[@]}
@@ -80,7 +82,8 @@ sysad_Mentor_Allocation_func ()
     declare -a Mentor_array_sysad
     declare -a Mentee_capacity_array_sysad
 
-    sysadlist=$(awk 'BEGIN{FS=" "; OFS=","} $0 !~/^Name/{if ($2 ~ /sysad/) print $3,$1 ;}' $1 | sort -k1,1nr)
+    sysadlist=$(curl -s https://inductions.delta.nitt.edu/sysad-task1-mentorDetails.txt | cat | awk 'BEGIN{FS=" "; OFS=","} $0 !~/^Name/{if ($2 ~ /sysad/) print $3,$1 ;}' \
+ | sort -k1,1nr)
     declare -i j
     j=0
     for i in $sysadlist
@@ -93,8 +96,8 @@ sysad_Mentor_Allocation_func ()
 
 
     declare -a rollnolist_sysad
-    menteelist_sysad=$(awk 'BEGIN{FS=" "} $0 !~/Rollno Name Domain/{if ($3 ~/.*sysad.*/) print $2 ;}' $2)
-    rollnolist_sysad=($(awk 'BEGIN{FS=" "} $0 !~/Rollno Name Domain/{if ($3 ~/.*sysad.*/) print $1 ;}' $2))
+    menteelist_sysad=$(awk 'BEGIN{FS=" "} $0 !~/Rollno Name Domain/{if ($3 ~/.*sysad.*/) print $2 ;}' $1)
+    rollnolist_sysad=($(awk 'BEGIN{FS=" "} $0 !~/Rollno Name Domain/{if ($3 ~/.*sysad.*/) print $1 ;}' $1))
     declare -i j
     j=0
     n=${#Mentor_array_sysad[@]}
@@ -102,9 +105,7 @@ sysad_Mentor_Allocation_func ()
     do 
         if [[ ${Mentee_capacity_array_sysad[$j]} -ne 0 ]]
         then
-            echo $mentee
             echo "${rollnolist_sysad[$j]} $mentee" >> ~/mentors/Sysad/${Mentor_array_sysad[$j]}/Alottedmentees.txt
-            echo 109
             Mentee_capacity_array_sysad[$j]=${Mentee_capacity_array_sysad[$j]}-1
             j=$(( (j+1) % n ))
         else
@@ -129,9 +130,9 @@ mentorAlloc ()
 
     if [[ $incore -eq 0 ]]
     then
-        web_Mentor_Allocation_func $1 $2
-        app_Mentor_Allocation_func $1 $2
-        sysad_Mentor_Allocation_func $1 $2
+        web_Mentor_Allocation_func $1
+        app_Mentor_Allocation_func $1
+        sysad_Mentor_Allocation_func $1
 
         echo "Mentor Allocation done sucessfully" 
     else
@@ -141,4 +142,4 @@ mentorAlloc ()
 }
 
 
-alias mentorAllocation="mentorAlloc ~/mentor_details.txt ~/mentee_domain.txt" # Assuming the mentor_details.txt is available in core's home directory
+alias mentorAllocation="mentorAlloc ~/mentee_domain.txt"
