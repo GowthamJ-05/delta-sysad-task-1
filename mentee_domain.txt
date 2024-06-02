@@ -1,4 +1,0 @@
-Rollno Name Domain
-10362023 Amelia web->sysad
-10492003 Matthew web->app->sysad
-
