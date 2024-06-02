@@ -11,6 +11,19 @@ write_domain ()
             concatenated_pref="$concatenated_pref->${pref[$i]}"
             mkdir ${pref[$i]}
             setfacl -m u:core:rwx /home/core/mentees/$2/${pref[$i]}
+            
+            if [[ ${pref[$i]} == 'web' ]]
+            then
+                setfacl -d -m g:web_mentors_grp:r-x /home/core/mentees/$2/${pref[$i]}
+            elif [[ ${pref[$i]} == 'app' ]]
+            then
+                setfacl -m g:app_mentors_grp:r-x /home/core/mentees/$2/${pref[$i]}
+                setfacl -d -m g:app_mentors_grp:r-x /home/core/mentees/$2/${pref[$i]}
+            elif [[ ${pref[$i]} == 'sysad' ]]
+            then
+                setfacl -d -m g:sysad_mentors_grp:r-x /home/core/mentees/$2/${pref[$i]}   
+            fi
+            setfacl -m o::--- /home/core/mentees/$2/${pref[$i]}
         else
             break
         fi
@@ -29,13 +42,13 @@ read_pref ()
     then
         if [[ $prf == 1 ]]
         then 
-            result=Webdev
+            result=web
         elif [[ $prf == 2 ]]
         then 
-            result=Appdev
+            result=app
         elif [[ $prf == 3 ]]
         then 
-            result=Sysad
+            result=sysad
         else
             unset prf
             echo "Enter a number in the range 1-3 as preference"
@@ -58,6 +71,8 @@ ask_pref ()
         then
             read_pref third
             pref[third]=$result 
+        else
+            return
         fi
     else
         echo "Atleast one preference needs to be given"
@@ -71,23 +86,32 @@ menu ()
     if (( $roll_no > 10000000 && $roll_no < 12000000 ))
     then
         echo "Provide your preference in order"
-        echo "Enter 1 for Webdev "
-        echo "Enter 2 for Appdev"
-        echo "Enter 3 for Sysad "
+        echo "Enter 1 for web "
+        echo "Enter 2 for app"
+        echo "Enter 3 for sysad "
         echo "Press enter if you don't want to provide further preference"
 
         ask_pref
-        if [[ ${pref[first]} == ${pref[second]} ]] || [[ ${pref[second]} == ${pref[third]} ]] || [[ ${pref[third]} == ${pref[first]} ]]
+        if [[ ${pref[second]} != '' ]]
         then
-            echo "Entered the same domain twice or more"
-            echo "Do again"
-            menu
+            if [[ ${pref[first]} == ${pref[second]} ]] || [[ ${pref[second]} == ${pref[third]} ]] || [[ ${pref[third]} == ${pref[first]} ]]
+            then
+                echo "Entered the same domain twice or more"
+                echo "Do again"
+                menu
+            else
+                for index in first second third
+                do 
+                    echo "Your $index preference is ${pref[$index]}"
+                done
+                write_domain $roll_no $(whoami)
+            fi
         else
             for index in first second third
             do 
                 echo "Your $index preference is ${pref[$index]}"
             done
-                write_domain $roll_no $(whoami)
+            write_domain $roll_no $(whoami)
         fi
     else
         echo "Enter a valid Roll Number"
