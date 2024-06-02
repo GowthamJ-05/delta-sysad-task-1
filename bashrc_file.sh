@@ -11,6 +11,10 @@ setupfunc ()
     sudo groupadd mentors_grp
     sudo groupadd mentees_grp
 
+    sudo groupadd web_mentors_grp
+    sudo groupadd app_mentors_grp
+    sudo groupadd sysad_mentors_grp
+
     # The core user creation and placing required directories within /home/core
     sudo useradd -m -g core_grp core
     sudo setfacl -m g:sudo:rwx /home/core
@@ -53,16 +57,19 @@ setupfunc ()
         sudo useradd -m -d /home/core/mentees/$mentee -g mentees_grp $mentee
         sudo setfacl -m g:sudo:rwx /home/core/mentees/$mentee
 
-        # Allow access for core 
-        sudo setfacl -m u:core:rwx /home/core/mentees/$mentee
-        sudo setfacl -d -m u:core:rwx /home/core/mentees/$mentee
-        
-        # Allow defaults permissions for $mentee
-        sudo setfacl -d -m u:$mentee:rw- /home/core/mentees/$mentee
-
         # Creation of required files within $mentee's home directory
         cd /home/core/mentees/$mentee
         touch domain_pref.txt task_completed.txt task_submitted.txt
+
+        # Change the ownership of $mentees folder to core
+        sudo chown -R core:core_grp /home/core/mentees/$mentee
+
+        # Allow access for core to files created in the future
+        sudo setfacl -d -m u:core:rwx /home/core/mentees/$mentee
+
+        # Allow defaults permissions for $mentee
+        sudo setfacl -m u:$mentee:rwx /home/core/mentees/$mentee
+        sudo setfacl -d -m u:$mentee:rwx /home/core/mentees/$mentee
 
         # Specific permission for $mentee on task_completed.txt
         sudo setfacl -m u:$mentee:r-- /home/core/mentees/$mentee/task_completed.txt
@@ -93,6 +100,7 @@ setupfunc ()
         
         # Mentor user creation 
         sudo useradd -m -d /home/core/mentors/Webdev/$mentor -g mentors_grp $mentor
+        sudo usermod -aG  web_mentors_grp $mentor
         sudo setfacl -m g:sudo:rwx /home/core/mentors/Webdev/$mentor
         
         # Allow access for core
@@ -140,6 +148,7 @@ setupfunc ()
     do
         # Mentor user creation and placing required files within $mentor's home directory
         sudo useradd -m -d /home/core/mentors/Appdev/$mentor -g mentors_grp $mentor
+        sudo usermod -aG  app_mentors_grp $mentor
         sudo setfacl -m g:sudo:rwx /home/core/mentors/Appdev/$mentor
 
         # Allow access for core
@@ -188,6 +197,7 @@ setupfunc ()
     do
         # Mentor user creation and placing required files within $mentor's home directory
         sudo useradd -m -d /home/core/mentors/Sysad/$mentor -g mentors_grp $mentor
+        sudo usermod -aG  sysad_mentors_grp $mentor
         sudo setfacl -m g:sudo:rwx /home/core/mentors/Sysad/$mentor
 
         # Allow access for core
