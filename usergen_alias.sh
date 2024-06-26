@@ -50,12 +50,16 @@ setupfunc ()
     sudo usermod -s /bin/bash core
 
     # Mentee users creation and permission
-    mentee_list=$(grep -v ^Name $2 | cut -d ' ' -f 1)
+    mentee_list=$(awk 'BEGIN{OFS="_"} $0 !~/Name RollNo/{print $1,$2}' $2)
     for mentee in $mentee_list
     do 
         # Mentee user creation 
         sudo useradd -m -d /home/core/mentees/$mentee -g mentees_grp $mentee
         sudo setfacl -m g:sudo:rwx /home/core/mentees/$mentee
+
+        # Allow defaults permissions for $mentee
+        sudo setfacl -m u:$mentee:rwx /home/core/mentees/$mentee
+        sudo setfacl -d -m u:$mentee:rwx /home/core/mentees/$mentee
 
         # Creation of required files within $mentee's home directory
         cd /home/core/mentees/$mentee
@@ -67,10 +71,6 @@ setupfunc ()
         # Allow access for core to files created in the future
         sudo setfacl -d -m u:core:rwx /home/core/mentees/$mentee
 
-        # Allow defaults permissions for $mentee
-        sudo setfacl -m u:$mentee:rwx /home/core/mentees/$mentee
-        sudo setfacl -d -m u:$mentee:rwx /home/core/mentees/$mentee
-
         # Specific permission for $mentee on task_completed.txt
         sudo setfacl -m u:$mentee:r-- /home/core/mentees/$mentee/task_completed.txt
 
@@ -81,7 +81,7 @@ setupfunc ()
         sudo setfacl -m o::0 /home/core/mentees/$mentee
 
         # Allow write access to mentee_domain.txt
-        sudo setfacl -m u:$mentee:-w- /home/core/$3
+        sudo setfacl -m u:$mentee:rw- /home/core/$3
 
         # Change the mentee's shell from sh to bash
         sudo usermod -s /bin/bash $mentee
@@ -102,23 +102,25 @@ setupfunc ()
         sudo useradd -m -d /home/core/mentors/Webdev/$mentor -g mentors_grp $mentor
         sudo usermod -aG  web_mentors_grp $mentor
         sudo setfacl -m g:sudo:rwx /home/core/mentors/Webdev/$mentor
-        
-        # Allow access for core
-        sudo setfacl -m u:core:rwx /home/core/mentors/Webdev/$mentor
-        sudo setfacl -d -m u:core:rwx /home/core/mentors/Webdev/$mentor
+
+        # Allow defaults permissions for $mentor
+        sudo setfacl -m u:$mentor:rwx /home/core/mentors/Webdev/$mentor
+        sudo setfacl -d -m u:$mentor:rwx /home/core/mentors/Webdev/$mentor
         
         # Creation of required files and directories within $mentor's home directory
         cd /home/core/mentors/Webdev/$mentor
         touch Alottedmentees.txt
         mkdir submitted_tasks
-        
-        # Allow access for core
-        sudo setfacl -m u:core:rwx /home/core/mentors/Webdev/$mentor/submitted_tasks
-        sudo setfacl -d -m u:$mentor:rwx /home/core/mentors/Webdev/$mentor/submitted_tasks
-        
+    
         # Creation of required directories within submitted_tasks
         cd submitted_tasks
         mkdir task1 task2 task3
+
+        # Change the ownership of $mentor folder to core
+        sudo chown -R core:core_grp /home/core/mentors/Webdev/$mentor
+
+        # Allow access for core to files created in the future
+        sudo setfacl -d -m u:core:rwx /home/core/mentors/Webdev/$mentor
 
         # Restrict the mentors_grp access to $mentor
         sudo setfacl -m g::0 /home/core/mentors/Webdev/$mentor
@@ -151,22 +153,24 @@ setupfunc ()
         sudo usermod -aG  app_mentors_grp $mentor
         sudo setfacl -m g:sudo:rwx /home/core/mentors/Appdev/$mentor
 
-        # Allow access for core
-        sudo setfacl -m u:core:rwx /home/core/mentors/Appdev/$mentor
-        sudo setfacl -d -m u:core:rwx /home/core/mentors/Appdev/$mentor
+        # Allow defaults permissions for $mentor
+        sudo setfacl -m u:$mentor:rwx /home/core/mentors/Appdev/$mentor
+        sudo setfacl -d -m u:$mentor:rwx /home/core/mentors/Appdev/$mentor
 
         # Creation of required files and directories within $mentor's home directory
         cd /home/core/mentors/Appdev/$mentor
         touch Alottedmentees.txt
         mkdir submitted_tasks
 
-        # Allow access for core
-        sudo setfacl -d -m u:core:rwx /home/core/mentors/Appdev/$mentor/submitted_tasks
-        sudo setfacl -d -m u:$mentor:rwx /home/core/mentors/Appdev/$mentor/submitted_tasks
-
         # Creation of required directories within submitted_tasks
         cd submitted_tasks
         mkdir task1 task2 task3
+
+        # Change the ownership of $mentor folder to core
+        sudo chown -R core:core_grp /home/core/mentors/Appdev/$mentor
+
+        # Allow access for core to files created in the future
+        sudo setfacl -d -m u:core:rwx /home/core/mentors/Appdev/$mentor
 
         # Restrict the mentors_grp access to $mentor
         sudo setfacl -m g::0 /home/core/mentors/Appdev/$mentor
@@ -200,22 +204,24 @@ setupfunc ()
         sudo usermod -aG  sysad_mentors_grp $mentor
         sudo setfacl -m g:sudo:rwx /home/core/mentors/Sysad/$mentor
 
-        # Allow access for core
-        sudo setfacl -m u:core:rwx /home/core/mentors/Sysad/$mentor
-        sudo setfacl -d -m u:core:rwx /home/core/mentors/Sysad/$mentor
-        
+        # Allow defaults permissions for $mentor
+        sudo setfacl -m u:$mentor:rwx /home/core/mentors/Sysad/$mentor
+        sudo setfacl -d -m u:$mentor:rwx /home/core/mentors/Sysad/$mentor
+   
         # Creation of required files and directories within $mentor's home directory
         cd /home/core/mentors/Sysad/$mentor
         touch Alottedmentees.txt
         mkdir submitted_tasks
 
-        # Allow access for core
-        sudo setfacl -d -m u:core:rwx /home/core/mentors/Sysad/$mentor/submitted_tasks
-        sudo setfacl -d -m u:$mentor:rwx /home/core/mentors/Sysad/$mentor/submitted_tasks
-
         # Creation of required directories within submitted_tasks
         cd submitted_tasks
         mkdir task1 task2 task3
+
+        # Change the ownership of $mentor folder to core
+        sudo chown -R core:core_grp /home/core/mentors/Sysad/$mentor
+
+        # Allow access for core to files created in the future
+        sudo setfacl -d -m u:core:rwx /home/core/mentors/Sysad/$mentor
 
         # Restrict the mentors_grp access to $mentor
         sudo setfacl -m g::0 /home/core/mentors/Sysad/$mentor
@@ -254,32 +260,19 @@ usergen_func ()
         if [[ $opinion = "Y" || $opinion = "y" ]]
         then 
             thepwd=$(pwd)
-            setupfunc $1 $2 ${3#~/*} 2> /dev/null >&2
-            if [ $? -eq 0 ]
-            then 
-                echo "Users and permissions have been done successfully"
-            else
-                echo "There was an unexpected problem :("
-                echo "Try again later"
-            fi
-            cd $thepwd
+            setupfunc $1 $2 $3 2> /dev/null >&2
+            echo "Users and permissions have been done successfully"
         fi
         
     else
         thepwd=$(pwd)
-        setupfunc $1 $2 ${3#~/*} 2> /dev/null >&2
-        if [ $? -eq 0 ]
-        then 
-            echo "Users and permissions have been done successfully"
-        else
-            echo "There was an unexpected problem :("
-            echo "Try again later"
-        fi
+        setupfunc $1 $2 $3 2> /dev/null >&2
+        echo "Users and permissions have been done successfully"
         cd $thepwd
     fi
 }
 
-alias usergen="usergen_func ~/mentor_details.txt ~/mentee_details.txt ~/mentee_domain.txt"     #Assuming the .txt files are present in sysadm's home directory along with the .bashrc file
+alias usergen="usergen_func $HOME/mentor_details.txt $HOME/mentee_details.txt mentee_domain.txt"     #Assuming the .txt files are present in sysadm's home directory along with the .bashrc file
 
 
 
