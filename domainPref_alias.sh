@@ -2,35 +2,39 @@
 
 write_domain ()
 {
-    cd /home/core/mentees/$2
+    cd /home/core/mentees/$1
+    name=${1%_*}
+    rollno=${1#*_}
     concatenated_pref=""
     for i in first second third
     do 
-        if [[ ${pref[$i]} != '' ]]
+        if [[ -n ${pref[$i]} ]]
         then
             concatenated_pref="$concatenated_pref->${pref[$i]}"
-            mkdir ${pref[$i]}
-            setfacl -m u:core:rwx /home/core/mentees/$2/${pref[$i]}
-            
-            if [[ ${pref[$i]} == 'web' ]]
-            then
-                setfacl -d -m g:web_mentors_grp:r-x /home/core/mentees/$2/${pref[$i]}
-            elif [[ ${pref[$i]} == 'app' ]]
-            then
-                setfacl -m g:app_mentors_grp:r-x /home/core/mentees/$2/${pref[$i]}
-                setfacl -d -m g:app_mentors_grp:r-x /home/core/mentees/$2/${pref[$i]}
-            elif [[ ${pref[$i]} == 'sysad' ]]
-            then
-                setfacl -d -m g:sysad_mentors_grp:r-x /home/core/mentees/$2/${pref[$i]}   
+            if [[ ! -d ${pref[$i]} ]]; then
+                mkdir ${pref[$i]} 
+                if [[ ${pref[$i]} == 'web' ]]
+                then
+                    setfacl -m g:web_mentors_grp:r-x /home/core/mentees/$1/${pref[$i]}
+                    setfacl -d -m g:web_mentors_grp:r-x /home/core/mentees/$1/${pref[$i]}
+                elif [[ ${pref[$i]} == 'app' ]]
+                then
+                    setfacl -m g:app_mentors_grp:r-x /home/core/mentees/$1/${pref[$i]}
+                    setfacl -d -m g:app_mentors_grp:r-x /home/core/mentees/$1/${pref[$i]}
+                elif [[ ${pref[$i]} == 'sysad' ]]
+                then
+                    setfacl -m g:sysad_mentors_grp:r-x /home/core/mentees/$1/${pref[$i]}
+                    setfacl -d -m g:sysad_mentors_grp:r-x /home/core/mentees/$1/${pref[$i]}   
+                fi
+                setfacl -m o::--- /home/core/mentees/$1/${pref[$i]}
+            else
+                break
             fi
-            setfacl -m o::--- /home/core/mentees/$2/${pref[$i]}
-        else
-            break
         fi
     done
     concatenated_pref=${concatenated_pref#->}
     echo -e "Preference \n$concatenated_pref" > domain_pref.txt
-    echo "$1 $2 $concatenated_pref" >> /home/core/mentee_domain.txt
+    echo "$rollno $name $concatenated_pref" >> /home/core/mentee_domain.txt
 
 }
 
@@ -82,15 +86,12 @@ ask_pref ()
 
 menu ()
 {
-    read -p "Enter your Roll Number: " roll_no
-    if (( $roll_no > 10000000 && $roll_no < 12000000 ))
-    then
+    if [[ ! -s "$HOME/domain_pref.txt" ]]; then
         echo "Provide your preference in order"
         echo "Enter 1 for web "
-        echo "Enter 2 for app"
+        echo "Enter 2 for app "
         echo "Enter 3 for sysad "
-        echo "Press enter if you don't want to provide further preference"
-
+        echo -e "Press enter if you don't want to provide further preference \n"
         ask_pref
         if [[ ${pref[second]} != '' ]]
         then
@@ -104,37 +105,25 @@ menu ()
                 do 
                     echo "Your $index preference is ${pref[$index]}"
                 done
-                write_domain $roll_no $(whoami)
+                write_domain $(whoami)
             fi
         else
             for index in first second third
             do 
                 echo "Your $index preference is ${pref[$index]}"
             done
-            write_domain $roll_no $(whoami)
+            write_domain $(whoami)
         fi
     else
-        echo "Enter a valid Roll Number"
-        menu    
-    fi    
+        echo "You have already used domain_pref. Can't use it again"
+    fi  
 }
 
 
 
 domainPref_func ()
 {
-    inmentees=1
-    grouplist=$(groups)
-    for grp in $grouplist
-    do
-        if [[ $grp == "mentees_grp" ]]
-        then
-            inmentees=0
-            break
-        fi
-    done
-
-    if [[ $inmentees -eq 0 ]]
+    if echo $(groups) | grep -q '\bmentees_grp\b'
     then
         menu
     else
