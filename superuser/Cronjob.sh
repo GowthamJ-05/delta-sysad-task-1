@@ -15,7 +15,7 @@ for i in 1 2
 do  
     if ! crontab - l | grep -qF ${crontab[$i]}
     then
-        (crontab -l 2> /dev/null ;echo "${crontab[$i]}") > crontab -
+        (crontab -l 2> /dev/null ;echo "${crontab[$i]}") | crontab -
     else
         echo "Cronjob already added!"
     fi
