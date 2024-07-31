@@ -35,18 +35,18 @@ web_Mentor_Allocation_func ()
     n=${#Mentor_array_web[@]}
     for mentee in $menteelist_web
     do 
-        if [[ ${Mentee_capacity_array_web[$j]} -ne 0 ]]
-        then
-            rollno=${mentee#*_}
-            name=${mentee%_*}
-            echo "$rollno $name" >> $HOME/mentors/Webdev/${Mentor_array_web[$j]}/Alottedmentees.txt
-            setfacl -m u:${Mentor_array_web[$j]}:r-x $HOME/mentees/$mentee
-            setfacl -m u:${Mentor_array_web[$j]}:rw- $HOME/mentees/$mentee/task_completed.txt
-            Mentee_capacity_array_web[$j]=$((Mentee_capacity_array_web[$j]-1))
+        while (( ${Mentee_capacity_array_web[$j]} == 0 ))
+        do 
             j=$(( (j+1) % n ))
-        else
-            j=$(( (j+1) % n ))
-        fi
+        done
+        
+        rollno=${mentee#*_}
+        name=${mentee%_*}
+        echo "$rollno $name" >> $HOME/mentors/Webdev/${Mentor_array_web[$j]}/Alottedmentees.txt
+        setfacl -m u:${Mentor_array_web[$j]}:r-x $HOME/mentees/$mentee
+        setfacl -m u:${Mentor_array_web[$j]}:rw- $HOME/mentees/$mentee/task_completed.txt
+        Mentee_capacity_array_web[$j]=$((Mentee_capacity_array_web[$j]-1))
+        j=$(( (j+1) % n ))
     done
 }
 
@@ -71,18 +71,18 @@ app_Mentor_Allocation_func ()
     n=${#Mentor_array_app[@]}
     for mentee in $menteelist_app
     do 
-        if [[ ${Mentee_capacity_array_app[$j]} -ne 0 ]]
-        then
-            rollno=${mentee#*_}
-            name=${mentee%_*}
-            echo "$rollno $name" >> $HOME/mentors/Appdev/${Mentor_array_app[$j]}/Alottedmentees.txt
-            setfacl -m u:${Mentor_array_app[$j]}:r-x $HOME/mentees/$mentee
-            setfacl -m u:${Mentor_array_app[$j]}:rw- $HOME/mentees/$mentee/task_completed.txt
-            Mentee_capacity_array_app[$j]=$((Mentee_capacity_array_app[$j]-1))
+        while (( ${Mentee_capacity_array_app[$j]} == 0 ))
+        do 
             j=$(( (j+1) % n ))
-        else
-            j=$(( (j+1) % n ))
-        fi
+        done
+        
+        rollno=${mentee#*_}
+        name=${mentee%_*}
+        echo "$rollno $name" >> $HOME/mentors/Appdev/${Mentor_array_sysad[$j]}/Alottedmentees.txt
+        setfacl -m u:${Mentor_array_app[$j]}:r-x $HOME/mentees/$mentee
+        setfacl -m u:${Mentor_array_app[$j]}:rw- $HOME/mentees/$mentee/task_completed.txt
+        Mentee_capacity_array_app[$j]=$((Mentee_capacity_array_app[$j]-1))
+        j=$(( (j+1) % n ))
     done
 }
 
@@ -107,18 +107,18 @@ sysad_Mentor_Allocation_func ()
     n=${#Mentor_array_sysad[@]}
     for mentee in $menteelist_sysad
     do 
-        if [[ ${Mentee_capacity_array_sysad[$j]} -ne 0 ]]
-        then
-            rollno=${mentee#*_}
-            name=${mentee%_*}
-            echo "$rollno $name" >> $HOME/mentors/Sysad/${Mentor_array_sysad[$j]}/Alottedmentees.txt
-            setfacl -m u:${Mentor_array_sysad[$j]}:r-x $HOME/mentees/$mentee
-            setfacl -m u:${Mentor_array_sysad[$j]}:rw- $HOME/mentees/$mentee/task_completed.txt
-            Mentee_capacity_array_sysad[$j]=$((Mentee_capacity_array_sysad[$j]-1))
+        while (( ${Mentee_capacity_array_sysad[$j]} == 0 ))
+        do 
             j=$(( (j+1) % n ))
-        else
-            j=$(( (j+1) % n ))
-        fi
+        done
+        
+        rollno=${mentee#*_}
+        name=${mentee%_*}
+        echo "$rollno $name" >> $HOME/mentors/Sysad/${Mentor_array_sysad[$j]}/Alottedmentees.txt
+        setfacl -m u:${Mentor_array_sysad[$j]}:r-x $HOME/mentees/$mentee
+        setfacl -m u:${Mentor_array_sysad[$j]}:rw- $HOME/mentees/$mentee/task_completed.txt
+        Mentee_capacity_array_sysad[$j]=$((Mentee_capacity_array_sysad[$j]-1))
+        j=$(( (j+1) % n ))
     done
 }
 
