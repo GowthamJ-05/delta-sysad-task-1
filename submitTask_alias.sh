@@ -27,7 +27,7 @@ mentor_func ()
                 then
                     ln -s $HOME/../../../mentees/$mentee/$domain/Task$i $HOME/submitted_tasks/task$i/$mentee
                 fi
-                if [[ -z "$task_location/*" ]]
+                if [[ "$(ls -A "$task_location")" ]]
                 then
                     task_completed_arr[$i]='n'
                 else
