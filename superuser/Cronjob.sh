@@ -1,5 +1,5 @@
 #!/bin/bash
-if [[ -e "$HOME/run_displayStatus.sh" ]]
+if ![[ -e "$HOME/run_displayStatus.sh" ]]
 then
     touch "$HOME/run_displayStatus.sh"
     chmod +x "$HOME/run_displayStatus.sh"
