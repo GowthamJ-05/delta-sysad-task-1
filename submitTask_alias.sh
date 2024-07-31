@@ -45,7 +45,7 @@ mentor_func ()
 mentee_func ()
 {
     mentee_preference=$(awk 'BEGIN{FS="->"} {if (NR == 2) {for (i=1;i<=NF;i++) print $i}}' "/home/core/mentees/$(whoami)/domain_pref.txt")
-    condition=1
+    # condition=1
     if echo $1 | grep -q "${mentee_preference}"
     then
         echo "$1:" > /home/core/mentees/$(whoami)/task_submitted.txt
