@@ -37,6 +37,7 @@ mentor_func ()
                 task_completed_arr[$i]='n'
             fi
         done
+        column=$(awk -v domain="$domain" 'BEGIN{column=1; FS=",";} $0 ~/^Tasks_domain/{for (i = 1; i <= NF; i++) {if ($i != domain){column++} else {print column ;break}}}' $dir_location/../task_completed.txt)
         modified_data=$(awk -v col="$column" -v val1="${task_completed_arr[1]}" -v val2="${task_completed_arr[2]}" -v val3="${task_completed_arr[3]}" 'BEGIN {task[2] = val1;task[3] = val2;task[4] = val3;FS = ",";OFS = ",";ORS="\n"}$0 !~ /^Task_Domain/ {$col = task[NR];}{print $1,$2,$3,$4;}' "$dir_location/../task_completed.txt")
         echo -e "$modified_data" > $dir_location/../task_completed.txt
     done
