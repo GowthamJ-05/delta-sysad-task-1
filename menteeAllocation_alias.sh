@@ -6,7 +6,6 @@ task_completed_setup ()
     j=0
     for mentee in $menteelist
     do 
-        declare -a mentee_domainlist
         mentee_domainlist=$( echo "${domainlist[$j]}" | awk 'BEGIN{FS="->";ORS=","} {for(i=1;i<=NF;i++) print $i ;}' )
         echo -e "Tasks_domain,${mentee_domainlist%,}" > $HOME/mentees/$mentee/task_completed.txt
         echo -e "Task1\nTask2\nTask3" >> $HOME/mentees/$mentee/task_completed.txt
