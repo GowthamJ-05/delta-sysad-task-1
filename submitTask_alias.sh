@@ -29,9 +29,9 @@ mentor_func ()
                 fi
                 if [[ "$(ls -A "$task_location")" ]]
                 then
-                    task_completed_arr[$i]='n'
-                else
                     task_completed_arr[$i]='y'
+                else
+                    task_completed_arr[$i]='n'
                 fi
             else
                 task_completed_arr[$i]='n'
